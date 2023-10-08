@@ -14,13 +14,6 @@ $$pV=nRT$$
 
 Van der Waals -tilanyhtälö on kehittyneempi malli ideaalikaasusta. Se ottaa huomioon molekyylien koon sekä molekyylien välisiä vuorovaikutuksia. Van der Waals -tilanyhtälö on muotoa
 
-$$
-\left[
-    p + a \left( \frac{n}{V} \right)^2 
-\right] 
-\left( 
-    \frac{V}{n} - b
-\right) = RT
-$$,
+$$\left[ p + a \left( \frac{n}{V} \right)^2 \right] \left( \frac{V}{n} - b \right) = RT$$
 
 missä vakiot $a$ ja $b$ ovat kokeellisesti eri kaasuille määrättyjä vakioita.
