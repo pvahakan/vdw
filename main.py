@@ -10,7 +10,8 @@ input = {
 }
 
 data = {
-    'O2': {'molar_mass': 31.999} # g/mol
+    'O2': {'molar_mass': 31.999}, # g/mol
+    'H2': {'molar_mass': 2.016, 'a': 0.0245, 'b': 0.00002661} # g/mol, Pa m⁶, m³/mol
 }
 
 def calculate_n(m, M):
@@ -43,21 +44,39 @@ def ideal_pressure(n, R, T, V):
     """
     return (n * R * T) / V
 
+def vdw_pressure(n, R, T, V, a, b):
+    """
+    Laskee kaasun paineen van der Waals -tilanyhtälön avulla.
+    """
+    print('!!! !!! !!!')
+    print('Tarkista vakioiden a ja b yksiköt, meneehän kaikki oikein!!!')
+    print('!!! !!! !!!')
+    second_term = V/n-b
+    to_substract = a*(n/V)**2
+    return (R*T)/second_term - to_substract
+
 
 if __name__ == '__main__':
-    # Lasketaan 12 g 290 K happikaasun paine, kun tilavuus on 5 l
+    # Lasketaan 12 g 290 K vetykaasun paine eri tilavuuksilla
     m = 12
     V = [i/1000 for i in range(1, 10)]
-    p = []
-    M = data['O2']['molar_mass']
+    p_ideal = []
+    p_vdw = []
+    M = data['H2']['molar_mass']
+    a = data['H2']['a']
+    b = data['H2']['b']
     R = input['ideal_R']
     n = calculate_n(m, M)
     T = 290
     for v in V:
-        p.append(ideal_pressure(n, R, T, v))
+        p_ideal.append(ideal_pressure(n, R, T, v))
+        p_vdw.append(vdw_pressure(n, R, T, v, a, b))
 
     for i in range(len(V)):
-        print(V[i], p[i])
+        print(V[i], p_ideal[i], p_vdw[i])
 
-    plt.plot(V, p, '.')
+    plt.xlabel('volume')
+    plt.ylabel('pressure')
+    plt.plot(V, p_ideal, '.')
+    plt.plot(V, p_vdw, 'x')
     plt.show()
