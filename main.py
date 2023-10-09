@@ -9,9 +9,9 @@ input = {
 }
 
 data = {
-    'O2': {'molar_mass': 31.999}, # g/mol
-    'H2': {'molar_mass': 2.016, 'a': 0.0245, 'b': 0.00002661}, # g/mol, Pa m⁶, m³/mol
-    'CO2': {'molar mass': 44.01, 'a': 3.592, 'b': 0.04267} # g/mol, L² atm / mol², L/mol
+    'O2': {'molar_mass': 31.999, 'a': 1.36, 'b': 0.0319}, # g/mol, L^2 * atm / mol^2, L/mol
+    'H2': {'molar_mass': 2.016, 'a': 0.242, 'b': 0.0265}, # g/mol, L^2 * atm / mol^2, L/mol
+    'CO2': {'molar mass': 44.01, 'a': 3.592, 'b': 0.04267} # g/mol, L^2 * atm / mol^2, L/mol
 }
 
 def calculate_n(m, M):
@@ -38,9 +38,14 @@ def ideal_pressure(n, T, V):
     T : float
         Kaasun lämpötila kelvineinä
     V : float
-        Kaasun tilavuus kuutiometreinä
+        Kaasun tilavuus litroina
+
+    Return
+    ------
+    Palauttaa ideaalikaasumallin mukaisen paineen yksikössä atm.
+
     """
-    R = 8.3135 # J/mol*K, ideaalikaasulain kaasuvakio
+    R = 0.0820574 # L*atm / mol*K
     return (n * R * T) / V
 
 def vdw_pressure(n, T, V, a, b):
@@ -94,11 +99,11 @@ def test_carbondioxide():
     """
     n = 1
     T = 273
-    V = 0.0224
+    V = 22.4
     a = data['CO2']['a']
     b = data['CO2']['b']
     p_ideal = ideal_pressure(n, T, V)
-    p_vdw = vdw_pressure(n, T , 22.4, a, b)
+    p_vdw = vdw_pressure(n, T , V, a, b)
     print(f'Ideal gas: {p_ideal}, vdw: {p_vdw}')
 
 if __name__ == '__main__':
