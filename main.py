@@ -29,48 +29,52 @@ def calculate_n(m, M):
     """
     return m/M
 
-def ideal_pressure(n, T, V):
-    """
-    Laskee kaasun paineen ideaalikaasun tilanyhtälön avulla.
+class Ideal:
+    def __init__(self, n, T, p=None, V=None):
+        """
+        Parameters
+        ----------
+        n : float
+            Kaasun ainemäärä mooleina
+        T : float
+            Kaasun lämpötila kelvineinä
+        p : float
+            Kaasun paine ilmakehän paineena (atm)
+        V : float
+            Kaasun tilavuus litroina
+        """
 
-    Parameters
-    ----------
-    n : float
-        Kaasun ainemäärä mooleina
-    T : float
-        Kaasun lämpötila kelvineinä
-    V : float
-        Kaasun tilavuus litroina
+        self.n = n
+        self.T = T
+        self.p = p
+        self.V = V
+        self.R = 0.0820574 # L*atm / mol*K
 
-    Return
-    ------
-    Palauttaa ideaalikaasumallin mukaisen paineen yksikössä atm.
+    def pressure(self):
+        """
+        Laskee kaasun paineen ideaalikaasun tilanyhtälön avulla.
 
-    """
-    R = 0.0820574 # L*atm / mol*K
-    return (n * R * T) / V
+        Return
+        ------
+        Palauttaa ideaalikaasumallin mukaisen paineen yksikössä atm.
+
+        """
+        self.p = (self.n * self.R * self.T) / self.V
+        return self.p
     
 
-def ideal_volume(n, T, P):
-    """
-    Laskee kaasun tilavuuden ideaalikaasun tilanyhtälön avulla.
+    def volume(self):
+        """
+        Laskee kaasun tilavuuden ideaalikaasun tilanyhtälön avulla.
 
-    Parameters
-    ----------
-    n : float
-        Kaasun ainemäärä mooleina
-    T : float
-        Kaasun lämpötila kelvineinä
-    P : float
-        Kaasun paine ilmakehän paineena (atm)
 
-    Return
-    ------
-    Palauttaa ideaalikaasumallin mukaisen tilavuuden litroina.
+        Return
+        ------
+        Palauttaa ideaalikaasumallin mukaisen tilavuuden litroina.
 
-    """
-    R = 0.0820574 # L*atm / mol*K
-    return (n * R * T) / P
+        """
+        self.V = (self.n * self.R * self.T) / self.p
+        return self.V
 
 def vdw_pressure(n, T, V, a, b):
     """
@@ -161,39 +165,13 @@ def test_carbondioxide():
     print(f'Ideal gas: {p_ideal}, vdw: {p_vdw}')
 
 if __name__ == '__main__':
-    # test_oxygen()
-    # test_carbondioxide()
     n = 1.00
     T = 273
-    # V = [i/10 for i in range(1, 200)]
     p = 4
 
     a = data['O2']['a']
     b = data['O2']['b']
 
-    vdw_volume(n, T, p, a, b)
-    print(vdw_pressure(n, T, 5.57, a, b))
-
-    # p_ideal = []
-    # p_vdw = []
-
-    # product_ideal = []
-    # product_vdw = []
-
-    # for v in V:
-    #     p_i = ideal_pressure(n, T, v)
-    #     p_v = vdw_pressure(n, T, v, a, b)
-
-    #     p_ideal.append(p_i)
-    #     product_ideal.append(p_i * v)
-
-    #     p_vdw.append(p_v)
-    #     product_vdw.append(p_v * v)
-
-    # # p_ideal = ideal_pressure(n, T, V)
-    # # p_vdw = vdw_pressure(n, T, V, a, b)
-
-    # plt.plot(p_ideal, product_vdw, color='black')
-    # plt.plot(p_vdw, product_vdw, color='green')
-    # plt.show()
-
+    ideal_gas = Ideal(n, T, p)
+    print(ideal_gas.volume())
+    print(ideal_gas.pressure())
