@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import fsolve
 
 input = {
     'mode': 'ideal',  # käytetään ideaalikaasua
@@ -47,6 +49,28 @@ def ideal_pressure(n, T, V):
     """
     R = 0.0820574 # L*atm / mol*K
     return (n * R * T) / V
+    
+
+def ideal_volume(n, T, P):
+    """
+    Laskee kaasun tilavuuden ideaalikaasun tilanyhtälön avulla.
+
+    Parameters
+    ----------
+    n : float
+        Kaasun ainemäärä mooleina
+    T : float
+        Kaasun lämpötila kelvineinä
+    P : float
+        Kaasun paine ilmakehän paineena (atm)
+
+    Return
+    ------
+    Palauttaa ideaalikaasumallin mukaisen tilavuuden litroina.
+
+    """
+    R = 0.0820574 # L*atm / mol*K
+    return (n * R * T) / P
 
 def vdw_pressure(n, T, V, a, b):
     """
@@ -76,6 +100,36 @@ def vdw_pressure(n, T, V, a, b):
     to_substract = a*(n/V)**2
 
     return (R*T)/second_term - to_substract
+
+def vdw_volume(n, T, P, a, b):
+    """
+    Laskee kaasun tilavuuden van der Waals -tilanyhtälön avulla.
+
+    Parameters
+    ----------
+    n : float
+        Kaasun ainemäärä mooleina
+    T : float
+        Kaasun lämpötila kelvineinä
+    P : float
+        Kaasun paine yksikössä atm
+    a : float
+        van der Waals -tilanyhtälön vakio a yksikössä L^2 * atm / mol^2
+    b : float
+        van der Waals -tilanyhtälön vakio b yksikössä L/mol
+
+    Return
+    ------
+    Palauttaa van der Waals -tilanyhtälön avulla lasketun kaasun tilavuuden litroina
+
+    """
+    R = 0.0820574 # L*atm / mol*K
+    func = lambda V : (p + a*n**2/V**2) * (V - n*b) - n*R*T
+    test_value = 1
+
+    print(func(test_value))
+    print(fsolve(func, test_value))
+
 
 def test_oxygen():
     """
@@ -108,26 +162,38 @@ def test_carbondioxide():
 
 if __name__ == '__main__':
     # test_oxygen()
-    test_carbondioxide()
-    # Lasketaan 200 g 290 K vetykaasun paine eri tilavuuksilla
-    # m = 50
-    # V = [i/1000 for i in range(1, 10)]
+    # test_carbondioxide()
+    n = 1.00
+    T = 273
+    # V = [i/10 for i in range(1, 200)]
+    p = 4
+
+    a = data['O2']['a']
+    b = data['O2']['b']
+
+    vdw_volume(n, T, p, a, b)
+    print(vdw_pressure(n, T, 5.57, a, b))
+
     # p_ideal = []
     # p_vdw = []
-    # M = data['H2']['molar_mass']
-    # a = data['H2']['a']
-    # b = data['H2']['b']
-    # n = calculate_n(m, M)
-    # T = 350
+
+    # product_ideal = []
+    # product_vdw = []
+
     # for v in V:
-    #     p_ideal.append(ideal_pressure(n, T, v))
-    #     p_vdw.append(vdw_pressure(n, T, v, a, b))
+    #     p_i = ideal_pressure(n, T, v)
+    #     p_v = vdw_pressure(n, T, v, a, b)
 
-    # for i in range(len(V)):
-    #     print(V[i], p_ideal[i], p_vdw[i])
+    #     p_ideal.append(p_i)
+    #     product_ideal.append(p_i * v)
 
-    # plt.xlabel('volume')
-    # plt.ylabel('pressure')
-    # plt.plot(V, p_ideal, '.')
-    # plt.plot(V, p_vdw, 'x')
+    #     p_vdw.append(p_v)
+    #     product_vdw.append(p_v * v)
+
+    # # p_ideal = ideal_pressure(n, T, V)
+    # # p_vdw = vdw_pressure(n, T, V, a, b)
+
+    # plt.plot(p_ideal, product_vdw, color='black')
+    # plt.plot(p_vdw, product_vdw, color='green')
     # plt.show()
+
