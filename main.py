@@ -75,65 +75,70 @@ class Ideal:
         """
         self.V = (self.n * self.R * self.T) / self.p
         return self.V
+        
 
-def vdw_pressure(n, T, V, a, b):
-    """
-    Laskee kaasun paineen van der Waals -tilanyhtälön avulla.
+class VDW:
+    def __init__(self, a, b, n, T, p=None, V=None):
+        """
+        Parameters
+        ----------
+        a : float
+            van der Waals -tilanyhtälön vakio a yksikössä L^2 * atm / mol^2
+        b : float
+            van der Waals -tilanyhtälön vakio b yksikössä L/mol
+        n : float
+            Kaasun ainemäärä mooleina
+        T : float
+            Kaasun lämpötila kelvineinä
+        p : float
+            Kaasun paine yksikössä atm
+        V : float
+            Kaasun tilavuus litroina
+        """
 
-    Parameters
-    ----------
-    n : float
-        Kaasun ainemäärä mooleina
-    T : float
-        Kaasun lämpötila kelvineinä
-    V : float
-        Kaasun tilavuus litroina
-    a : float
-        van der Waals -tilanyhtälön vakio a yksikössä L^2 * atm / mol^2
-    b : float
-        van der Waals -tilanyhtälön vakio b yksikössä L/mol
+        self.a = a
+        self.b = b
+        self.n = n
+        self.T = T
+        self.p = p
+        self.V = V
+        self.R = 0.0820574 # L*atm / mol*K
 
-    Return
-    ------
-    Palauttaa van der Waals -tilanyhtälön avulla lasketun paineen yksikössä atm
+    def pressure(self):
+        """
+        Laskee kaasun paineen van der Waals -tilanyhtälön avulla.
 
-    """
-    R = 0.0820574 # L*atm / mol*K
 
-    second_term = V/n-b
-    to_substract = a*(n/V)**2
+        Return
+        ------
+        Palauttaa van der Waals -tilanyhtälön avulla lasketun paineen yksikössä atm
 
-    return (R*T)/second_term - to_substract
+        """
 
-def vdw_volume(n, T, P, a, b):
-    """
-    Laskee kaasun tilavuuden van der Waals -tilanyhtälön avulla.
+        second_term = self.V / self.n - self.b
+        to_substract = self.a * (self.n / self.V)**2
 
-    Parameters
-    ----------
-    n : float
-        Kaasun ainemäärä mooleina
-    T : float
-        Kaasun lämpötila kelvineinä
-    P : float
-        Kaasun paine yksikössä atm
-    a : float
-        van der Waals -tilanyhtälön vakio a yksikössä L^2 * atm / mol^2
-    b : float
-        van der Waals -tilanyhtälön vakio b yksikössä L/mol
+        self.p = (self.R * self.T) / second_term - to_substract
+        return self.p
 
-    Return
-    ------
-    Palauttaa van der Waals -tilanyhtälön avulla lasketun kaasun tilavuuden litroina
+    def volume(self):
+        """
+        Laskee kaasun tilavuuden van der Waals -tilanyhtälön avulla.
 
-    """
-    R = 0.0820574 # L*atm / mol*K
-    func = lambda V : (p + a*n**2/V**2) * (V - n*b) - n*R*T
-    test_value = 1
+        Return
+        ------
+        Palauttaa van der Waals -tilanyhtälön avulla lasketun kaasun tilavuuden litroina
 
-    print(func(test_value))
-    print(fsolve(func, test_value))
+        """
+        func = lambda V : (self.p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
+        test_value = 5
 
+        self.V = fsolve(func, test_value)
+        return self.V
+
+
+## Tests
+########
 
 def test_oxygen():
     """
@@ -142,11 +147,14 @@ def test_oxygen():
     40 l, 1 kg happikaasua pitäisi antaa 19,1 atm paineen.
     """
     m = 1000
-    V = 0.040
+    V = 40
     M = data['O2']['molar_mass']
     T = 298
     n = calculate_n(m, M)
-    print(ideal_pressure(n, T, V) / 101325)
+    o2 = Ideal(n, T, V=V)
+    print('1 kg happikaasua 40 l tilavuudessa pitäisi olla 19,1 atm paineessa')
+    print('Laskettu arvo:')
+    print(f'Määrä: {m} g, tilavuus: {V} l, paine: {o2.pressure()} atm')
 
 def test_carbondioxide():
     """
@@ -160,18 +168,36 @@ def test_carbondioxide():
     V = 22.4
     a = data['CO2']['a']
     b = data['CO2']['b']
-    p_ideal = ideal_pressure(n, T, V)
-    p_vdw = vdw_pressure(n, T , V, a, b)
-    print(f'Ideal gas: {p_ideal}, vdw: {p_vdw}')
+
+    ideal = Ideal(n, T, V=V)
+    vdw = VDW(a, b, n, T, V=V)
+
+    print('Testifunktio hiilidioksidille. V = 22,4 l, T = 0 C, n = 1 mol')
+    print('Ideaalikaasun pitäisi antaa 1 atm ja vdw-kaasun 0.995 atm')
+    print('Lasketut arvot:')
+    print(f'Ideal gas: {ideal.pressure()}, vdw: {vdw.pressure()}')
 
 if __name__ == '__main__':
     n = 1.00
-    T = 273
-    p = 4
+    T = 273 
+    # p = [i/10 for i in range(1, 100, 5)]
+    p = np.linspace(1, 1000, 50)
+    Vi = np.array([])
+    Vv = np.array([])
 
-    a = data['O2']['a']
-    b = data['O2']['b']
+    a = data['H2']['a']
+    b = data['H2']['b']
 
-    ideal_gas = Ideal(n, T, p)
-    print(ideal_gas.volume())
-    print(ideal_gas.pressure())
+    for paine in p:
+        ideal_gas = Ideal(n, T, paine)
+        vdw_gas = VDW(a, b, n, T, p=paine)
+        Vi = np.append(Vi, ideal_gas.volume())
+        Vv = np.append(Vv, vdw_gas.volume())
+        
+    plt.plot(p, p*Vi, '.', color='blue', label='ideal')
+    plt.plot(p, p*Vv, '.', color='red', label='van der Waals')
+    plt.legend()
+    plt.title('H2')
+    plt.ylabel('V (l)')
+    plt.xlabel('p (atm)')
+    plt.show()
