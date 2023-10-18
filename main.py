@@ -44,10 +44,21 @@ class FileHandler:
 
     def __enter__(self):
         self.file = open(self.input)
+        self.reader = csv.reader(self.file, delimiter=' ')
         return self
 
     def __exit__(self, *args):
         self.file.close()
+
+    def read_file(self):
+        for row in self.reader:
+            print(self.remove_comments(row))
+
+    def remove_comments(self, row):
+        if '#' in row:
+            comment_index = row.index('#')
+            return row[:comment_index]
+        return row
 
 
 ## Tests
@@ -95,6 +106,7 @@ if __name__ == '__main__':
     fh = FileHandler(inputfile)
     with fh:
         print('file opened')
+        fh.read_file()
 
     # with open('./test_input.inp') as file:
     #     reader = csv.reader(file, delimiter=' ')
