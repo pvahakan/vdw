@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 from gasmodels import Ideal, VDW
 
 input = {
@@ -28,6 +29,25 @@ def calculate_n(m, M):
         Kaasun moolimassa, g/mol
     """
     return m/M
+
+class FileHandler:
+    def __init__(self, inputfile : str):
+        """
+        Parameters
+        ----------
+        inputfile : str
+            File path to the inputfile. MUST END WITH .inp with small letters!
+        
+        """
+        self.input = inputfile
+        self.output = inputfile.split('.inp')[0] + '.out'
+
+    def __enter__(self):
+        self.file = open(self.input)
+        return self
+
+    def __exit__(self, *args):
+        self.file.close()
 
 
 ## Tests
@@ -71,26 +91,40 @@ def test_carbondioxide():
     print(f'Ideal gas: {ideal.pressure()}, vdw: {vdw.pressure()}')
 
 if __name__ == '__main__':
-    n = 1.00
-    T = 273 
-    # p = [i/10 for i in range(1, 100, 5)]
-    p = np.linspace(1, 1000, 50)
-    Vi = np.array([])
-    Vv = np.array([])
+    inputfile = './test_input.inp'
+    fh = FileHandler(inputfile)
+    with fh:
+        print('file opened')
 
-    a = data['H2']['a']
-    b = data['H2']['b']
+    # with open('./test_input.inp') as file:
+    #     reader = csv.reader(file, delimiter=' ')
+    #     for row in reader:
+    #         if '#' in row:
+    #             comment_index = row.index('#')
+    #             print(row[:comment_index])
 
-    for paine in p:
-        ideal_gas = Ideal(n, T, paine)
-        vdw_gas = VDW(a, b, n, T, p=paine)
-        Vi = np.append(Vi, ideal_gas.volume())
-        Vv = np.append(Vv, vdw_gas.volume())
-        
-    plt.plot(p, p*Vi, '.', color='blue', label='ideal')
-    plt.plot(p, p*Vv, '.', color='red', label='van der Waals')
-    plt.legend()
-    plt.title('H2')
-    plt.ylabel('V (l)')
-    plt.xlabel('p (atm)')
-    plt.show()
+
+
+    # n = 1.00
+    # T = 273 
+    # # p = [i/10 for i in range(1, 100, 5)]
+    # p = np.linspace(1, 1000, 50)
+    # Vi = np.array([])
+    # Vv = np.array([])
+
+    # a = data['H2']['a']
+    # b = data['H2']['b']
+
+    # for paine in p:
+    #     ideal_gas = Ideal(n, T, paine)
+    #     vdw_gas = VDW(a, b, n, T, p=paine)
+    #     Vi = np.append(Vi, ideal_gas.volume())
+    #     Vv = np.append(Vv, vdw_gas.volume())
+    #     
+    # plt.plot(p, p*Vi, '.', color='blue', label='ideal')
+    # plt.plot(p, p*Vv, '.', color='red', label='van der Waals')
+    # plt.legend()
+    # plt.title('H2')
+    # plt.ylabel('V (l)')
+    # plt.xlabel('p (atm)')
+    # plt.show()
