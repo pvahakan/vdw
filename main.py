@@ -51,14 +51,49 @@ class FileHandler:
         self.file.close()
 
     def read_file(self):
+        type, gas, temp, pressure, mass, volume = None, None, None, None, None, None
         for row in self.reader:
-            print(self.remove_comments(row))
+            row = self.remove_comments(row)
+            if 'type' in row:
+                type = self.find_value(row)
+            if 'gas' in row:
+                gas = self.find_value(row)
+            if 'temp' in row:
+                temp = self.find_value(row)
+            if 'mass' in row:
+                mass = self.find_value(row)
+            if 'pressure' in row:
+                pressure = self.find_value(row)
+                start = pressure.split('-')[0]
+                end = pressure.split('-')[-1]
+                pressure = np.linspace(float(start), float(end), 20)
+            if 'volume' in row:
+                volume = self.find_value(row)
+                start = volume.split('-')[0]
+                end = volume.split('-')[-1]
+                volume = np.linspace(float(start), float(end), 20)
+
+        print(f'Type: {type}')
+        print(f'Gas: {gas}')
+        print(f'Mass: {mass}')
+        print(f'Temperature: {temp}')
+        print(f'Pressure: {pressure}')
+        print(f'Volume: {volume}')
+
 
     def remove_comments(self, row):
         if '#' in row:
             comment_index = row.index('#')
             return row[:comment_index]
         return row
+
+    def find_value(self, row):
+        return row[row.index(':') + 1]
+
+    def create_model(self):
+        pass
+
+
 
 
 ## Tests
@@ -105,7 +140,6 @@ if __name__ == '__main__':
     inputfile = './test_input.inp'
     fh = FileHandler(inputfile)
     with fh:
-        print('file opened')
         fh.read_file()
 
     # with open('./test_input.inp') as file:
