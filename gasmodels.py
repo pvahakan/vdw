@@ -24,7 +24,7 @@ class Ideal:
     def __repr__(self) -> str:
         rpr = 'Type:\t\t ideal\n'
         rpr += '----------------------\n'
-        rpr += f'Ainemäärä:\t {self.n} mol\n'
+        rpr += f'Ainemäärä:\t {round(self.n, 3)} mol\n'
         rpr += f'Lämpötila:\t {self.T} K\n'
         if self.p is not None:
             rpr += f'Paineet:\n {self.p} atm\n'
@@ -86,6 +86,20 @@ class VDW:
         self.p = p
         self.V = V
         self.R = 0.0820574 # L*atm / mol*K
+
+    def __repr__(self) -> str:
+        rpr = 'Type:\t\t Van der Waals\n'
+        rpr += '------------------------------\n'
+        rpr += f'a:\t {self.a} L^2 * atm / mol^2\n'
+        rpr += f'b:\t {self.b} L/mol\n\n'
+        rpr += f'Ainemäärä:\t {round(self.n, 3)} mol\n'
+        rpr += f'Lämpötila:\t {self.T} K\n\n'
+        if self.p is not None:
+            rpr += f'Paineet:\n {self.p} atm\n'
+        if self.V is not None:
+            rpr += f'Tilavuus:\t {self.V} l\n'
+
+        return rpr
 
     def pressure(self):
         """
