@@ -51,6 +51,9 @@ class FileHandler:
         self.file.close()
 
     def read_file(self):
+        """
+        Reads data from input file and returns gas model as a dictionary.
+        """
         type, gas, temp, pressure, mass, volume = None, None, None, None, None, None
         for row in self.reader:
             row = self.remove_comments(row)
@@ -73,13 +76,16 @@ class FileHandler:
                 end = volume.split('-')[-1]
                 volume = np.linspace(float(start), float(end), 20)
 
-        print(f'Type: {type}')
-        print(f'Gas: {gas}')
-        print(f'Mass: {mass}')
-        print(f'Temperature: {temp}')
-        print(f'Pressure: {pressure}')
-        print(f'Volume: {volume}')
+        gas_model = {
+            'type': type,
+            'gas': gas,
+            'mass': mass,
+            'temp': temp,
+            'pressure': pressure,
+            'volume': volume
+        }
 
+        return gas_model
 
     def remove_comments(self, row):
         if '#' in row:
@@ -93,7 +99,30 @@ class FileHandler:
     def create_model(self):
         pass
 
+class Gas:
+    def __init__(self, model: dict):
+        self.model = model
+        self.type = model['type']
+        self.a = data[self.model['gas']]['a']
+        self.b = data[self.model['gas']]['b']
+        self.n = self.calculate_n()
+        self.V = self.model['volume']
+        self.p = self.model['pressure']
+        self.T = self.model['temp']
 
+    def calculate_n(self):
+        M = float(data[self.model['gas']]['molar_mass'])
+        m = float(self.model['mass'])
+        return m/M
+
+class Model:
+    def __init__(self, gas : Gas):
+        self.gas = gas
+        if self.gas.type == 'ideal':
+            self.model = Ideal(gas.n, gas.T, gas.p, gas.V)
+
+    def get_model(self):
+        return self.model
 
 
 ## Tests
@@ -140,7 +169,14 @@ if __name__ == '__main__':
     inputfile = './test_input.inp'
     fh = FileHandler(inputfile)
     with fh:
-        fh.read_file()
+        model = fh.read_file()
+
+    md = Model(Gas(model))
+    print(md.get_model())
+
+
+
+
 
     # with open('./test_input.inp') as file:
     #     reader = csv.reader(file, delimiter=' ')
