@@ -103,12 +103,20 @@ class Gas:
     def __init__(self, model: dict):
         self.model = model
         self.type = model['type']
+        self.name = self.model['gas']
         self.a = data[self.model['gas']]['a']
         self.b = data[self.model['gas']]['b']
         self.n = self.calculate_n()
         self.V = self.model['volume']
         self.p = self.model['pressure']
         self.T = self.model['temp']
+
+    def __repr__(self):
+        rpr = '================\n'
+        rpr += f'  {self.name}  \n'
+        rpr += f'  {self.type}  \n'
+        rpr += '================\n\n'
+        return rpr
 
     def calculate_n(self):
         M = float(data[self.model['gas']]['molar_mass'])
@@ -120,6 +128,8 @@ class Model:
         self.gas = gas
         if self.gas.type == 'ideal':
             self.model = Ideal(gas.n, gas.T, gas.p, gas.V)
+        if self.gas.type == 'vdw':
+            self.model = VDW(gas.a, gas.b, gas.n, gas.T, gas.p, gas.V)
 
     def get_model(self):
         return self.model
@@ -169,10 +179,11 @@ if __name__ == '__main__':
     inputfile = './test_input.inp'
     fh = FileHandler(inputfile)
     with fh:
-        model = fh.read_file()
+        gas = Gas(fh.read_file())
+        model = Model(gas)
 
-    md = Model(Gas(model))
-    print(md.get_model())
+    print(gas)
+    print(model.get_model())
 
 
 
