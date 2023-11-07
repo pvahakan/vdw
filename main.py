@@ -54,9 +54,12 @@ class FileHandler:
         """
         Reads data from input file and returns gas model as a dictionary.
         """
+        calculation = None
         type, gas, temp, pressure, mass, volume = None, None, None, None, None, None
         for row in self.reader:
             row = self.remove_comments(row)
+            if 'calculation' in row:
+                calculation = self.find_value(row)
             if 'type' in row:
                 type = self.find_value(row)
             if 'gas' in row:
@@ -77,6 +80,7 @@ class FileHandler:
                 volume = np.linspace(float(start), float(end), 20)
 
         gas_model = {
+            'calculation': calculation,
             'type': type,
             'gas': gas,
             'mass': mass,
@@ -104,12 +108,23 @@ class Gas:
         self.model = model
         self.type = model['type']
         self.name = self.model['gas']
-        self.a = data[self.model['gas']]['a']
-        self.b = data[self.model['gas']]['b']
-        self.n = self.calculate_n()
-        self.V = self.model['volume']
-        self.p = self.model['pressure']
-        self.T = self.model['temp']
+
+        self.a = float(data[self.model['gas']]['a'])
+        self.b = float(data[self.model['gas']]['b'])
+        self.n = float(self.calculate_n())
+        try:
+            self.V = float(self.model['volume'])
+        except Exception as e:
+            self.V = None
+        try:
+            self.p = self.model['pressure']
+        except Exception as e:
+            self.p = None
+        try:
+            self.T = float(self.model['temp'])
+        except Exception as e:
+            print(e)
+            
 
     def __repr__(self):
         rpr = '================\n'
@@ -140,6 +155,8 @@ class UserInterface:
         self.fh = filehandler
         self.gas_model = self.fh.read_file()
         self.gas = Gas(self.gas_model)
+        self.calculation = self.gas_model['calculation']
+        self.model = self.create_gas_model()
 
     def create_gas_model(self):
         if self.gas.type == 'ideal':
@@ -148,7 +165,12 @@ class UserInterface:
             return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
 
     def calculate_value(self):
-        pass
+        if self.calculation == 'vol':
+            result = self.model.volume()
+        if self.calculation == 'pre':
+            result = self.model.pressure()
+
+        return result
 
 ## Tests
 ########
@@ -198,9 +220,10 @@ if __name__ == '__main__':
     with fh:
         ui = UserInterface(fh)
         
-    model = ui.create_gas_model()
+    # model = ui.create_gas_model()
 
-    print(model)
+    print(ui.calculate_value())
+
 
 
 

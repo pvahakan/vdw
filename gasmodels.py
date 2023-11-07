@@ -121,14 +121,28 @@ class VDW:
     def volume(self):
         """
         Laskee kaasun tilavuuden van der Waals -tilanyhtälön avulla.
+        
+
+        ### HOX
+        ###
+        ### Ei mitään hajua laskeeko tämä mitään oikein!
+        ###
+        ###################################################
 
         Return
         ------
         Palauttaa van der Waals -tilanyhtälön avulla lasketun kaasun tilavuuden litroina
 
         """
-        func = lambda V : (self.p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
+        # func = lambda V : (self.p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
+        func = lambda V, p : (p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
+        print(self)
         test_value = 5
 
-        self.V = fsolve(func, test_value)
+        self.V = []
+        
+        for p in self.p:
+            sol = fsolve(func, test_value, p)
+            self.V.append(sol[0])
+
         return self.V
