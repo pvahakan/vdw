@@ -123,17 +123,32 @@ class Gas:
         m = float(self.model['mass'])
         return m/M
 
-class Model:
-    def __init__(self, gas : Gas):
-        self.gas = gas
+# class Model:
+#     def __init__(self, gas : Gas):
+#         self.gas = gas
+#         if self.gas.type == 'ideal':
+#             self.model = Ideal(gas.n, gas.T, gas.p, gas.V)
+#         if self.gas.type == 'vdw':
+#             self.model = VDW(gas.a, gas.b, gas.n, gas.T, gas.p, gas.V)
+# 
+#     def get_model(self):
+#         return self.model
+
+
+class UserInterface:
+    def __init__(self, filehandler: FileHandler):
+        self.fh = filehandler
+        self.gas_model = self.fh.read_file()
+        self.gas = Gas(self.gas_model)
+
+    def create_gas_model(self):
         if self.gas.type == 'ideal':
-            self.model = Ideal(gas.n, gas.T, gas.p, gas.V)
+            return Ideal(self.gas.n, self.gas.T, self.gas.p, self.gas.V)
         if self.gas.type == 'vdw':
-            self.model = VDW(gas.a, gas.b, gas.n, gas.T, gas.p, gas.V)
+            return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
 
-    def get_model(self):
-        return self.model
-
+    def calculate_value(self):
+        pass
 
 ## Tests
 ########
@@ -176,14 +191,19 @@ def test_carbondioxide():
     print(f'Ideal gas: {ideal.pressure()}, vdw: {vdw.pressure()}')
 
 if __name__ == '__main__':
+
     inputfile = './test_input.inp'
     fh = FileHandler(inputfile)
-    with fh:
-        gas = Gas(fh.read_file())
-        model = Model(gas)
 
-    print(gas)
-    print(model.get_model())
+    with fh:
+        ui = UserInterface(fh)
+        
+    model = ui.create_gas_model()
+
+    print(model)
+
+
+
 
 
 
