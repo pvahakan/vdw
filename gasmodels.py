@@ -111,7 +111,6 @@ class VDW:
         Palauttaa van der Waals -tilanyhtälön avulla lasketun paineen yksikössä atm
 
         """
-
         second_term = self.V / self.n - self.b
         to_substract = self.a * (self.n / self.V)**2
 
@@ -136,7 +135,7 @@ class VDW:
         """
         # func = lambda V : (self.p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
         func = lambda V, p : (p + self.a * self.n**2 / V**2) * (V - self.n * self.b) - self.n * self.R * self.T
-        print(self)
+        # print(self)
         test_value = 5
 
         self.V = []

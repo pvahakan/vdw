@@ -14,7 +14,7 @@ input = {
 data = {
     'O2': {'molar_mass': 31.999, 'a': 1.36, 'b': 0.0319}, # g/mol, L^2 * atm / mol^2, L/mol
     'H2': {'molar_mass': 2.016, 'a': 0.242, 'b': 0.0265}, # g/mol, L^2 * atm / mol^2, L/mol
-    'CO2': {'molar mass': 44.01, 'a': 3.592, 'b': 0.04267} # g/mol, L^2 * atm / mol^2, L/mol
+    'CO2': {'molar_mass': 44.01, 'a': 3.592, 'b': 0.04267} # g/mol, L^2 * atm / mol^2, L/mol
 }
 
 def calculate_n(m, M):
@@ -91,6 +91,17 @@ class FileHandler:
 
         return gas_model
 
+    def write_output(self, variable : np.array, result : np.array):
+        desc_str = '-------------\n'
+        desc_str += 'RESULT\n'
+        desc_str += '-------------\n\n\n'
+        desc_str += 'Volume (l) \tPressure (atm)\n'
+        print(desc_str)
+
+        for i in range(len(variable)):
+            print(f'{variable[i]:.6f}\t{result[i]:.6f}')
+
+
     def remove_comments(self, row):
         if '#' in row:
             comment_index = row.index('#')
@@ -113,7 +124,7 @@ class Gas:
         self.b = float(data[self.model['gas']]['b'])
         self.n = float(self.calculate_n())
         try:
-            self.V = float(self.model['volume'])
+            self.V = self.model['volume']
         except Exception as e:
             self.V = None
         try:
@@ -220,9 +231,16 @@ if __name__ == '__main__':
     with fh:
         ui = UserInterface(fh)
         
-    # model = ui.create_gas_model()
+    model = ui.create_gas_model()
 
-    print(ui.calculate_value())
+    # Test, calculating volumes when pressures has been given
+    pressure = model.p
+    volume = ui.calculate_value()
+
+    fh.write_output(pressure, volume)
+
+    # plt.plot(pressure, pressure*volume)
+    # plt.show()
 
 
 

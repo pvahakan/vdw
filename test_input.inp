@@ -1,9 +1,10 @@
 %model
-type : "ideal"
-calculation : "volume"
-gas : "O2" # Muita mahdollisia: H2O, CO2, HE
+type : "vdw"
+calculation : "vol" # "pre" tai "vol"
+gas : "CO2" # Muita mahdollisia: H2O, CO2, HE
 
 %values
 temp : 270 # Kaasun lämpötila kelvineinä
 mass : 12 # Kaasun massa grammoina
-pressure : 1-100 # Laskee kaasun tilavuuden, kun paine on 1-100 atm
+# volume : 1-100 # Kaasun tilavuus litroina
+pressure : 1-1000 # Laskee kaasun tilavuuden, kun paine on 1-100 atm
