@@ -2,6 +2,12 @@
 
 Tarkoitus on tehdä laskentakoodi, jolla pystytään määrittämään eri kaasuille paine tilavuuden funktiona käyttäen ideaalikaasun tilanyhtälöä sekä van der Waals -tilanyhtälöä.
 
+# Tehtävänanto
+
+1. Laske kaasun tilavuus 1-1000 atm:n paineessa ideaalikaasumallilla sekä vdw-mallilla.
+2. Ota tuloksesta paine ja tilavuus, piirrä kuvaaja (P, PV)-koordinaatistoon ja vertaile eri mallien antamia tuloksia.
+3. Toista laskenta CO2 ja H2 -kaasuille.
+
 # Teoreettista taustaa
 
 ## Ideaalikaasu
