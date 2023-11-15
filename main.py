@@ -79,7 +79,7 @@ class FileHandler:
                 end = volume.split('-')[-1]
                 volume = np.linspace(float(start), float(end), 20)
 
-        gas_model = {
+        self.gas_model = {
             'calculation': calculation,
             'type': type,
             'gas': gas,
@@ -89,17 +89,27 @@ class FileHandler:
             'volume': volume
         }
 
-        return gas_model
+        return self.gas_model
 
-    def write_output(self, variable : np.array, result : np.array):
-        desc_str = '-------------\n'
-        desc_str += 'RESULT\n'
+    def write_output(self, model, variable : np.array, result : np.array):
+        desc_str = '\n-------------\n'
+        desc_str += 'TULOS\n'
         desc_str += '-------------\n\n\n'
-        desc_str += 'Volume (l) \tPressure (atm)\n'
-        print(desc_str)
+        desc_str += 'Tilavuus (l) \tPaine (atm)\n'
 
-        for i in range(len(variable)):
-            print(f'{variable[i]:.6f}\t{result[i]:.6f}')
+        with open(self.output, 'w') as opfile:
+            opfile.write('\n-------------\n')
+            opfile.write('LÄHTÖTIEDOT')
+            opfile.write('\n-------------\n\n')
+            opfile.write(str(model))
+            opfile.write(desc_str)
+
+            for i in range(len(variable)):
+                opfile.write(f'{variable[i]:.6f}\t{result[i]:.6f}\n')
+
+            opfile.write('\n\n***\n')
+            opfile.write('End of output file')
+            opfile.write('\n***')
 
 
     def remove_comments(self, row):
@@ -110,9 +120,6 @@ class FileHandler:
 
     def find_value(self, row):
         return row[row.index(':') + 1]
-
-    def create_model(self):
-        pass
 
 class Gas:
     def __init__(self, model: dict):
@@ -237,48 +244,7 @@ if __name__ == '__main__':
     pressure = model.p
     volume = ui.calculate_value()
 
-    fh.write_output(pressure, volume)
+    fh.write_output(model, pressure, volume)
 
     # plt.plot(pressure, pressure*volume)
-    # plt.show()
-
-
-
-
-
-
-
-
-
-    # with open('./test_input.inp') as file:
-    #     reader = csv.reader(file, delimiter=' ')
-    #     for row in reader:
-    #         if '#' in row:
-    #             comment_index = row.index('#')
-    #             print(row[:comment_index])
-
-
-
-    # n = 1.00
-    # T = 273 
-    # # p = [i/10 for i in range(1, 100, 5)]
-    # p = np.linspace(1, 1000, 50)
-    # Vi = np.array([])
-    # Vv = np.array([])
-
-    # a = data['H2']['a']
-    # b = data['H2']['b']
-
-    # for paine in p:
-    #     ideal_gas = Ideal(n, T, paine)
-    #     vdw_gas = VDW(a, b, n, T, p=paine)
-    #     Vi = np.append(Vi, ideal_gas.volume())
-    #     Vv = np.append(Vv, vdw_gas.volume())
-    #     
-    # plt.plot(p, p*Vi, '.', color='blue', label='ideal')
-    # plt.plot(p, p*Vv, '.', color='red', label='van der Waals')
-    # plt.legend()
-    # plt.title('H2')
-    # plt.ylabel('V (l)')
-    # plt.xlabel('p (atm)')
     # plt.show()
