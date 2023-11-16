@@ -1,4 +1,7 @@
 from scipy.optimize import fsolve
+import warnings
+
+warnings.filterwarnings('ignore')
 
 class Ideal:
     def __init__(self, n, T, p=None, V=None):
