@@ -169,9 +169,14 @@ class Gas:
         self.type = model['type']
         self.name = self.model['gas']
 
-        self.a = float(data[self.model['gas']]['a'])
-        self.b = float(data[self.model['gas']]['b'])
-        self.n = float(self.calculate_n())
+        try:
+            self.a = float(data[self.model['gas']]['a'])
+            self.b = float(data[self.model['gas']]['b'])
+            self.n = float(self.calculate_n())
+        except KeyError:
+            print('Check your input file.')
+            print('Error might be found in gas definition.')
+            exit()
         try:
             self.V = self.model['volume']
         except Exception as e:
@@ -183,7 +188,7 @@ class Gas:
         try:
             self.T = float(self.model['temp'])
         except Exception as e:
-            print(e)
+            self.T = None
             
 
     def __repr__(self):
@@ -215,22 +220,32 @@ class UserInterface:
         Function that creates right gas model based on 'type' keyword on input file.
         """
 
-        if self.gas.type == 'ideal':
-            return Ideal(self.gas.n, self.gas.T, self.gas.p, self.gas.V)
-        if self.gas.type == 'vdw':
-            return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
+        try:
+            if self.gas.type == 'ideal':
+                return Ideal(self.gas.n, self.gas.T, self.gas.p, self.gas.V)
+            if self.gas.type == 'vdw':
+                return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
+        except AttributeError:
+            print('Check the input file.')
+            print('There might be something wrong with gas definition.')
+            exit()
 
     def calculate_value(self):
         """
         Function that executes right calculation based on input files 'calculation' keyword.
         """
 
-        if self.calculation == 'vol':
-            result = self.model.volume()
-        if self.calculation == 'pre':
-            result = self.model.pressure()
+        try:
+            if self.calculation == 'vol':
+                result = self.model.volume()
+            if self.calculation == 'pre':
+                result = self.model.pressure()
 
-        return result
+            return result
+        except Exception:
+            print('Something went wrong with calculation.')
+            print('Check your input files keywords and values.')
+            exit()
 
 ## Tests
 ########
@@ -284,9 +299,9 @@ if __name__ == '__main__':
     model = ui.create_gas_model()
 
     # Test, calculating volumes when pressures has been given
-    pressure = model.p
     volume = ui.calculate_value()
 
+    pressure = model.p
     fh.write_output(model, pressure, volume)
 
     # plt.plot(pressure, pressure*volume)
