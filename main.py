@@ -4,31 +4,11 @@ import numpy as np
 import csv
 from gasmodels import Ideal, VDW
 
-input = {
-    'mode': 'ideal',  # käytetään ideaalikaasua
-    'gas': 'O2',      # happikaasu
-    'temp': 270,      # lämpötila kelvineinä
-    'mass': 12,       # massa grammoina
-}
-
 data = {
     'O2': {'molar_mass': 31.999, 'a': 1.36, 'b': 0.0319}, # g/mol, L^2 * atm / mol^2, L/mol
     'H2': {'molar_mass': 2.016, 'a': 0.242, 'b': 0.0265}, # g/mol, L^2 * atm / mol^2, L/mol
     'CO2': {'molar_mass': 44.01, 'a': 3.592, 'b': 0.04267} # g/mol, L^2 * atm / mol^2, L/mol
 }
-
-def calculate_n(m, M):
-    """
-    Laskee kaasun ainemäärän mooleina.
-
-    Parameters
-    ----------
-    m : float
-        Kaasun massa grammoina
-    M : float
-        Kaasun moolimassa, g/mol
-    """
-    return m/M
 
 class FileHandler:
     def __init__(self, inputfile : str):
@@ -155,18 +135,6 @@ class Gas:
         M = float(data[self.model['gas']]['molar_mass'])
         m = float(self.model['mass'])
         return m/M
-
-# class Model:
-#     def __init__(self, gas : Gas):
-#         self.gas = gas
-#         if self.gas.type == 'ideal':
-#             self.model = Ideal(gas.n, gas.T, gas.p, gas.V)
-#         if self.gas.type == 'vdw':
-#             self.model = VDW(gas.a, gas.b, gas.n, gas.T, gas.p, gas.V)
-# 
-#     def get_model(self):
-#         return self.model
-
 
 class UserInterface:
     def __init__(self, filehandler: FileHandler):
