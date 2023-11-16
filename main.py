@@ -24,9 +24,13 @@ class FileHandler:
         self.output = inputfile.split('.inp')[0] + '.out'
 
     def __enter__(self):
-        self.file = open(self.input)
-        self.reader = csv.reader(self.file, delimiter=' ')
-        return self
+        try:
+            self.file = open(self.input)
+            self.reader = csv.reader(self.file, delimiter=' ')
+            return self
+        except FileNotFoundError:
+            print('Check that the given input file name is correct.')
+            exit()
 
     def __exit__(self, *args):
         self.file.close()
