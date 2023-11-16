@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import sys
 from gasmodels import Ideal, VDW
 
 data = {
@@ -45,6 +46,7 @@ class FileHandler:
             'pressure' = gas pressure in atm, this can be a numpy array
             'volume' = gas volume in l, this can be a numpy array
         """
+        number_of_values = 20
         calculation = None
         type, gas, temp, pressure, mass, volume = None, None, None, None, None, None
         for row in self.reader:
@@ -63,12 +65,12 @@ class FileHandler:
                 pressure = self.find_value(row)
                 start = pressure.split('-')[0]
                 end = pressure.split('-')[-1]
-                pressure = np.linspace(float(start), float(end), 20)
+                pressure = np.linspace(float(start), float(end), number_of_values)
             if 'volume' in row:
                 volume = self.find_value(row)
                 start = volume.split('-')[0]
                 end = volume.split('-')[-1]
-                volume = np.linspace(float(start), float(end), 20)
+                volume = np.linspace(float(start), float(end), number_of_values)
 
         self.gas_model = {
             'calculation': calculation,
@@ -268,7 +270,8 @@ def test_carbondioxide():
 
 if __name__ == '__main__':
 
-    inputfile = './test_input.inp'
+    # inputfile = './test_input.inp'
+    inputfile = sys.argv[1]
     fh = FileHandler(inputfile)
 
     with fh:
