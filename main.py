@@ -32,7 +32,18 @@ class FileHandler:
 
     def read_file(self):
         """
-        Reads data from input file and returns gas model as a dictionary.
+        Reads data from input file.
+         
+        Return
+        ------ 
+        gas_model : dictionary with keys
+            'calculation' = which calculation will be executed ex. gas volume = 'vol' and pressure = 'pre'
+            'type' = which model type is used, ideal or vdw
+            'gas' = which gas is used, for example O2
+            'temp' = gas temperature in kelvins
+            'mass' = gas mass in grams
+            'pressure' = gas pressure in atm, this can be a numpy array
+            'volume' = gas volume in l, this can be a numpy array
         """
         calculation = None
         type, gas, temp, pressure, mass, volume = None, None, None, None, None, None
@@ -72,6 +83,20 @@ class FileHandler:
         return self.gas_model
 
     def write_output(self, model, variable : np.array, result : np.array):
+        """
+        Writes calculation info and result to the output file named with same name
+        as input file but with .out extension.
+
+        Parameters
+        ----------
+        model : Model
+            Object of Model class that describes the gas and parameters used in calculation.
+        variable : np.array
+            Quantity that has been given in input file.
+        result : np.array
+            Quantity that has been calculated based on variable.
+        """
+
         desc_str = '\n-------------\n'
         desc_str += 'TULOS\n'
         desc_str += '-------------\n\n\n'
@@ -93,12 +118,30 @@ class FileHandler:
 
 
     def remove_comments(self, row):
+        """
+        Removes commented parts from input file.
+
+        Parameters
+        ----------
+        row : list
+            A list of words in one line in input file.
+        """
+
         if '#' in row:
             comment_index = row.index('#')
             return row[:comment_index]
         return row
 
     def find_value(self, row):
+        """
+        Finds a value from the row of input file. Value is separated
+        from the keyword with ":".
+
+        Parameters
+        ----------
+        row : list
+            A list of words in one line in input file.
+        """
         return row[row.index(':') + 1]
 
 class Gas:
