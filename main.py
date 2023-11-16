@@ -146,6 +146,19 @@ class FileHandler:
 
 class Gas:
     def __init__(self, model: dict):
+        """
+        Parameters
+        ----------
+        model : dictionary with keys
+            'calculation' = which calculation will be executed ex. gas volume = 'vol' and pressure = 'pre'
+            'type' = which model type is used, ideal or vdw
+            'gas' = which gas is used, for example O2
+            'temp' = gas temperature in kelvins
+            'mass' = gas mass in grams
+            'pressure' = gas pressure in atm, this can be a numpy array
+            'volume' = gas volume in l, this can be a numpy array
+        """
+
         self.model = model
         self.type = model['type']
         self.name = self.model['gas']
@@ -175,6 +188,10 @@ class Gas:
         return rpr
 
     def calculate_n(self):
+        """
+        Calculates molar mass for Gas object (self).
+        """
+
         M = float(data[self.model['gas']]['molar_mass'])
         m = float(self.model['mass'])
         return m/M
@@ -188,12 +205,20 @@ class UserInterface:
         self.model = self.create_gas_model()
 
     def create_gas_model(self):
+        """
+        Function that creates right gas model based on 'type' keyword on input file.
+        """
+
         if self.gas.type == 'ideal':
             return Ideal(self.gas.n, self.gas.T, self.gas.p, self.gas.V)
         if self.gas.type == 'vdw':
             return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
 
     def calculate_value(self):
+        """
+        Function that executes right calculation based on input files 'calculation' keyword.
+        """
+
         if self.calculation == 'vol':
             result = self.model.volume()
         if self.calculation == 'pre':
@@ -214,7 +239,7 @@ def test_oxygen():
     V = 40
     M = data['O2']['molar_mass']
     T = 298
-    n = calculate_n(m, M)
+    n = m / M
     o2 = Ideal(n, T, V=V)
     print('1 kg happikaasua 40 l tilavuudessa pitäisi olla 19,1 atm paineessa')
     print('Laskettu arvo:')
