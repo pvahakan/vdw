@@ -1,0 +1,9 @@
+%model
+type : "ideal"
+calculation : "vol"
+gas : "H2"
+
+%values
+temp : 270
+mass : 12
+pressure : 1-1000
