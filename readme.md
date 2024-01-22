@@ -16,7 +16,7 @@ Input-tiedostossa kuvataan kaikki tarvittavat parametrit laskennan suorittamisek
 %model
 type : "vdw"
 calculation : "vol"
-gas : "CO2" # Muita mahdollisia: H2O, CO2, HE
+gas : "CO2" # Muita mahdollisia: H2, CO2, O2 
 
 %values
 temp : 270 # Kaasun lämpötila kelvineinä
@@ -28,7 +28,7 @@ Kaikki risuaidan (#) jälkeiset tekstit ovat kommentteja eikä niitä huomioida 
 
 - type: "vdw" ja "ideal". Viittaavat käytettävään malliin, missä "vdw" tarkoittaa van der Waals -tilanyhtälöä ja "ideal" ideaalikaasun tilanyhtälöä.
 - calculation: "vol". Kertoo mikä suure lasketaan. "vol" tarkoittaa, että lasketaan tilavuus.
-- gas: "CO2", "H2O", "HE". Kertoo mikä kaasu on kyseessä. Tässä hiilidioksidi, vesihöyry ja helium.
+- gas: "CO2", "H2", "O2". Kertoo mikä kaasu on kyseessä. Tässä hiilidioksidi, vety ja happi.
 - temp: Kaasun lämpötila kelvinasteina.
 - mass: Kaasun massa grammoina.
 - pressure: Painealue, jossa tilavuus halutaan laskea. Koodi muodostaa 20 arvoa annetulta väliltä. Väli annetaan muodossa alaraja-yläraja. Paineen yksikkönä on ilmakehän paine (atm).
@@ -37,10 +37,10 @@ Yllä olevia tietoja soveltamalla pystyy input-tiedostoa muokkaamaan halutunlais
 
 ## Laskentakoodin ajaminen
 
-Laskentakoodi suoritetaan komentoriviltä. Mene komentorivillä siihen hakemistoon jossa laskentakoodi on (main.py). Kun olet tässä hakemistossa, suorita komento
+Laskentakoodi suoritetaan komentoriviltä. Mene komentorivillä siihen hakemistoon jossa laskentakoodi on (comphy.sh). Kun olet tässä hakemistossa, suorita komento
 
 ```bash
-./main.py tiedostonimesi.inp
+./comphy.sh tiedostonimesi.inp
 ```
 
 Komentoriville saattaa tulostua jotakin varoituksia, mutta niistä ei tarvitse välittää. Mikäli kaikki meni putkeen, samassa kansiossa on nyt tiedosto ``tiedostonimesi.out``, joka sisältää laskennan tuloksen. Voit avata tiedoston jollakin tekstieditorilla (komentorivillä esim. ``less tiedostonimesi.out``).
@@ -67,6 +67,18 @@ Tästä yhtälösta paineen ratkaisu onnistuu analyyttisesti suhteellisen helpos
 
 # Tehtävänanto
 
-1. Laske kaasun tilavuus 1-1000 atm:n paineessa ideaalikaasumallilla sekä vdw-mallilla.
-2. Ota tuloksesta paine ja tilavuus, piirrä kuvaaja (P, PV)-koordinaatistoon ja vertaile eri mallien antamia tuloksia.
-3. Toista laskenta CO2 ja H2 -kaasuille.
+1. Tee input-tiedosto, jossa on seuraavat ominaisuudet:
+    - malli on ideaalikaasu
+    - lasketaan tilavuus
+    - kaasu on vety (H2)
+    - kaasun lämpötila on 270 K
+    - kaasun massa on 12 g
+    - kaasun paine on 1-1000 atm
+2. Suorita koodi, jolloin se laskee antamillasi parametreilla ideaalikaasumallin mukaiset tilavuuden arvot annetulla painevälillä. Koodi laskee 20 eri arvoa tasaisin välein.
+3. Avaa koodin tuottama output-tiedosto. Kerää taulukkolaskentaohjelmaan paineet sekä tilavuudet.
+4. Vaihda kaasumalliksi Van der Waals -kaasu (vdw) ja toista laskenta muuten samoilla tiedoilla.
+5. Ota paineet vdw-mallin mukaisesti lasketusta output-tiedostosta ja laita ne samaan taulukkoon kuin ideaalikaasumallin mukaiset paineet. Tilavuuden arvot pitäisi olla samat kuin aiemmassa laskussa.
+6. Toista sama hiilidioksidille (CO2). Eli laske samoilla paineiden arvoilla molempia malleja hyödyntäen tilavuudet.
+7. Kokoa hiilidioksidin paineet ja tilavuudet molemmista malleista uuteen taulukkoon.
+8. Piirrä hiilidioksidille ja vetykaasulle omat kuvaajat (p, pV)-koordinaatistoon. Yhdessä kuvaajassa tulee olla molemmat mallit samalle kaasulle.
+9. Miten paineen ja tilavuuden tulo käyttäytyy eri mallien mukaan?
