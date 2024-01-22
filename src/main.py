@@ -109,7 +109,13 @@ class FileHandler:
         desc_str += 'Tilavuus (l) \tPaine (atm)\n'
 
         with open(self.output, 'w') as opfile:
-            opfile.write('\n-------------\n')
+            opfile.write('\n   ____                ____  _           ')
+            opfile.write('\n  / ___|___  _ __ ___ |  _ \| |__  _   _ ')
+            opfile.write("\n | |   / _ \| '_ ' _ \| |_) | '_ \| | | |")
+            opfile.write('\n | |__| (_) | | | | | |  __/| | | | |_| |')
+            opfile.write('\n  \____\___/|_| |_| |_|_|   |_| |_|\__, |')
+            opfile.write('\n                                   |___/ ')
+            opfile.write('\n\n\n-------------\n')
             opfile.write('LÄHTÖTIEDOT')
             opfile.write('\n-------------\n\n')
             opfile.write(str(model))
@@ -222,10 +228,10 @@ class UserInterface:
 
         try:
             if self.gas.type == 'ideal':
-                return Ideal(self.gas.n, self.gas.T, self.gas.p, self.gas.V)
+                return Ideal(self.gas.name, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
             if self.gas.type == 'vdw':
-                return VDW(self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
-        except AttributeError:
+                return VDW(self.gas.name, self.gas.a, self.gas.b, self.gas.n, self.gas.T, self.gas.p, self.gas.V)
+        except AttributeError as e:
             print('Check the input file.')
             print('There might be something wrong with gas definition.')
             exit()
@@ -242,7 +248,7 @@ class UserInterface:
                 result = self.model.pressure()
 
             return result
-        except Exception:
+        except Exception as e:
             print('Something went wrong with calculation.')
             print('Check your input files keywords and values.')
             exit()

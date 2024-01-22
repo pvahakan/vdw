@@ -4,10 +4,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Ideal:
-    def __init__(self, n, T, p=None, V=None):
+    def __init__(self, name, n, T, p=None, V=None):
         """
         Parameters
         ----------
+        name: str
+            Kaasun nimi
         n : float
             Kaasun ainemäärä mooleina
         T : float
@@ -18,6 +20,7 @@ class Ideal:
             Kaasun tilavuus litroina
         """
 
+        self.name = name
         self.n = n
         self.T = T
         self.p = p
@@ -27,6 +30,7 @@ class Ideal:
     def __repr__(self) -> str:
         rpr = 'Type:\t\t ideal\n'
         rpr += '----------------------\n'
+        rpr += f'Kaasu:\t\t {self.name}\n'
         rpr += f'Ainemäärä:\t {round(self.n, 3)} mol\n'
         rpr += f'Lämpötila:\t {self.T} K\n'
         if self.p is not None:
@@ -64,10 +68,12 @@ class Ideal:
         
 
 class VDW:
-    def __init__(self, a, b, n, T, p=None, V=None):
+    def __init__(self, name, a, b, n, T, p=None, V=None):
         """
         Parameters
         ----------
+        name : str
+            Kaasun nimi
         a : float
             van der Waals -tilanyhtälön vakio a yksikössä L^2 * atm / mol^2
         b : float
@@ -82,6 +88,7 @@ class VDW:
             Kaasun tilavuus litroina
         """
 
+        self.name = name
         self.a = a
         self.b = b
         self.n = n
@@ -93,6 +100,7 @@ class VDW:
     def __repr__(self) -> str:
         rpr = 'Type:\t\t Van der Waals\n'
         rpr += '------------------------------\n'
+        rpr += f'Kaasu:\t {self.name}\n'
         rpr += f'a:\t {self.a} L^2 * atm / mol^2\n'
         rpr += f'b:\t {self.b} L/mol\n\n'
         rpr += f'Ainemäärä:\t {round(self.n, 3)} mol\n'
